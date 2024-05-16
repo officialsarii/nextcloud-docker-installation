@@ -106,7 +106,7 @@ MYSQL_DATABASE: Name of the database used by Nextcloud (default: db).
 MYSQL_USER: Choose a unique username for the MySQL user that Nextcloud will use (avoid yourmysqluser).
 Save the changes and exit the editor.
 
-9. Create docker-compose.yml File:
+9. Create docker-compose.yml File or you can find it on the project:
 ```Bash
 sudo nano docker-compose.yml
 ```
