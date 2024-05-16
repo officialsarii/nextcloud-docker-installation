@@ -154,31 +154,6 @@ volumes:
   db:
   nextcloud:
 ```
-Explanation
-version: '3': Specifies the Docker Compose file format version.
-Services: Defines the individual services that make up the Nextcloud application.
-db: The MariaDB database service for Nextcloud data storage.
-image: mariadb: Uses the official MariaDB Docker image.
-restart: unless-stopped: Automatically restarts the container if it crashes.
-command: Additional configuration options for the database server.
-volumes: Defines a persistent volume (db) to store the database data.
-env_file: References the db.env file for environment variables.
-redis: The Redis caching service for Nextcloud performance optimization.
-image: redis: Uses the official Redis Docker image.
-restart: always: Always restarts the container even if it exits successfully.
-command: Sets the Redis server password (replace with a strong password).
-app: The Nextcloud application container.
-image: nextcloud:latest: Uses the official Nextcloud Docker image (latest version).
-restart: unless-stopped: Automatically restarts the container if it crashes.
-ports: Maps the container port 80 (web server) to host port 8080 (you can adjust this if needed).
-links: Connects the Nextcloud container to the db and redis services.
-volumes: Defines a persistent volume (nextcloud) to store Nextcloud application data and configuration.
-environment: Sets environment variables for Nextcloud configuration.
-MYSQL_HOST=db: Specifies the database host address (internal service name).
-REDIS_HOST_PASSWORD=your_redis_password: Sets the Redis server password (replace with your chosen password).
-env_file: References the db.env file for environment variables.
-depends_on: Ensures that the db and redis services are started before the app service.
-Volumes: Defines persistent storage for the database and Nextcloud data.
 
 
 10. Run docker-compose up
@@ -186,3 +161,38 @@ In the project directory where you have the docker-compose.yml file, run the fol
 ```
 docker-compose up -d
 ```
+
+
+## Verifying Nextcloud Container Status and Inspecting Volumes
+
+Once you've completed the previous steps and set up Nextcloud with Docker Compose, you can verify if the containers are running and inspect their associated volumes.
+
+1. Checking Container Status
+```
+Bash
+docker ps
+```
+Explanation:
+docker ps: This command displays a list of all running Docker containers. Look for containers related to nextcloud, db, and redis to confirm they are running.
+
+2. Listing Volumes
+```Bash
+docker volume ls
+```
+Explanation:
+docker volume ls: This command lists all Docker volumes currently defined on your system. You should see volumes named nextcloud_db and nextcloud_nextcloud created by the Docker Compose setup.
+
+3. Inspecting Volumes
+```Bash
+docker volume inspect nextcloud_db
+docker volume inspect nextcloud_nextcloud
+```
+Explanation:
+docker volume inspect: This command provides detailed information about a specific Docker volume. Here, we're inspecting the nextcloud_db and nextcloud_nextcloud volumes.
+The output will show details like the volume driver used, the mount point on the host system (where the volume's data is stored), and any custom configurations associated with the volume.
+
+4. Accessing Nextcloud
+With the containers running, you can access the Nextcloud web interface by opening a web browser and navigating to:
+http://your_server_IP:8080 (if not using a custom domain name) **you can get your IP by using command ```ifconfig```
+https://your_domain (if using a custom domain and SSL certificate)
+Note: Replace your_server_IP with your server's actual IP address and your_domain with your configured domain name (if applicable). If using HTTPS with a custom domain, ensure you have a valid SSL certificate installed.
