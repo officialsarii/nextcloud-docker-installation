@@ -115,44 +115,69 @@ sudo nano: Opens the docker-compose.yml file for editing.
 Paste the following content into the file:
 
 ```
+# Define the Docker Compose version
 version: '3'
 
+# Define services within the application
 services:
+  # Database service
   db:
+    # Use the official mariadb image
     image: mariadb
+    # Automatically restart the container unless it's stopped manually
     restart: unless-stopped
+    # Set additional configuration options for the database server
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    # Define a persistent volume for the database data
     volumes:
-      - db:/var/lib/mysql
+      - db:/var/lib/mysql  # Map volume named 'db' to the container's /var/lib/mysql directory
+    # Reference environment variables from the db.env file
     env_file:
       - db.env
 
+  # Redis cache service
   redis:
+    # Use the official redis image
     image: redis
+    # Always restart the container even if it exits successfully
     restart: always
+    # Set the Redis server password (replace with a strong password)
     command: redis-server --requirepass your_redis_password
 
+  # Nextcloud application service
   app:
+    # Use the official nextcloud image (latest version)
     image: nextcloud:latest
+    # Automatically restart the container unless it's stopped manually
     restart: unless-stopped
+    # Map container port 80 (web server) to host port 8080 (adjust if needed)
     ports:
       - 8080:80
+    # Link the Nextcloud container to the db and redis services
     links:
       - db
       - redis
+    # Define a persistent volume for the Nextcloud application data and configuration
     volumes:
-      - nextcloud:/var/www/html
+      - nextcloud:/var/www/html  # Map volume named 'nextcloud' to the container's /var/www/html directory
+    # Set environment variables for Nextcloud configuration
     environment:
-      - MYSQL_HOST=db
-      - REDIS_HOST_PASSWORD=your_redis_password
+      - MYSQL_HOST=db  # Set the database host address (internal service name)
+      - REDIS_HOST_PASSWORD=your_redis_password  # Set the Redis server password (replace with a strong password)
+    # Reference environment variables from the db.env file
     env_file:
       - db.env
+    # Ensure the db and redis services are started before the app service
     depends_on:
       - db
       - redis
+
+# Define persistent volumes for the application
 volumes:
-  db:
-  nextcloud:
+  db:  # Define a volume named 'db' (used by the db service)
+  nextcloud:  # Define a volume named 'nextcloud' (used by the app service)
+
+
 ```
 
 
